@@ -15,13 +15,13 @@ import serial
 #global variables
 is_ready=False
 port_is_set=False
+driver_registers = 16
+driver_number = 3
 previosus_port=0
 r_val_port = (0, 2)
 g_val_port = (0, 1)
 b_val_port = (0, 0)
-data_frame = np.zeros((16 ,5), np.uint16)
-driver_registers = 16
-driver_number = 5
+data_frame = np.zeros((16 ,driver_number), np.uint16)
 
 #setup of root window
 root = tk.Tk()
@@ -229,7 +229,7 @@ def send_test():
 				root.after(1)
 
 				for driver_register in range(16):
-					for driver in range(5):
+					for driver in range(driver_number):
 						send_buffer = send_buffer + '{:0>4}'.format(hex(data_frame[driver_register, driver])[2:])
 
 				encoded_send_buffer = send_buffer.encode('utf-8')
@@ -238,7 +238,7 @@ def send_test():
 
 				print("Number of bytes sent: {}".format((ser.write(encoded_send_buffer))))
 
-				reci_buffer=ser.read(size=320)
+				reci_buffer=ser.read(size=driver_registers*4*driver_number)
 				print("RECI BUFFER: {}".format(reci_buffer.decode('utf-8')))
 
 				finished_frame.set("STATUS:\n\nFrame has been sent!")
