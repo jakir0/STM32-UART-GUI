@@ -93,7 +93,7 @@ def create_expected_color_img(bitmap_is_given=False, image_bitmap=0):
 	if os.path.exists("ICONS\EXPECTED_COLOR.png"):
 		os.remove("ICONS\EXPECTED_COLOR.png")
 	if(bitmap_is_given==False):
-		expected_color=np.zeros((400,400,3), np.uint16)
+		expected_color=np.zeros((400,400,3), np.uint8)
 		cv2.imwrite("ICONS\EXPECTED_COLOR.png", expected_color)
 
 	else:
@@ -142,20 +142,23 @@ def create_color():
     """
 	global is_ready, port_is_set
 
-	expected_color=np.zeros((400,400,3), np.uint16)
+	expected_color=np.zeros((400,400,3), np.uint8)
 	for i in range (0, 400):
 		for j in range (0, 400):
-			expected_color[i,j,2]=int(r_val.get())
-			expected_color[i,j,1]=int(g_val.get())
-			expected_color[i,j,0]=int(b_val.get())
+			expected_color[i,j,2]=np.uint8(int(r_val.get()))
+			expected_color[i,j,1]=np.uint8(int(g_val.get()))
+			expected_color[i,j,0]=np.uint8(int(b_val.get()))
 
 	create_expected_color_img(True, expected_color);
 	is_ready=True
 	set_status(is_ready, port_is_set)
+	#############################################
+	## Edit here during LAB
 	data_frame[r_val_port]=int(r_val.get())
 	data_frame[g_val_port]=int(g_val.get())
 	data_frame[b_val_port]=int(b_val.get())
 	print("Data frame:\n\n{}".format(data_frame))
+	#############################################
 
 
 def disconnect_from_stm():
