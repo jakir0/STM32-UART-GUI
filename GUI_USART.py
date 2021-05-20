@@ -153,7 +153,12 @@ def create_color():
 	is_ready=True
 	set_status(is_ready, port_is_set)
 	#############################################
-	## Edit here during LAB
+	##gamma = 2.8 # Correction factor
+	##max_in = 65535 # Top end of INPUT range
+	##max_out = 65535 # Top end of OUTPUT range
+	##value_after_gamma_corretion = (int)(np.power(int(r_val.get())/max_in, gamma) * max_out + 0.5
+	###############################################
+	
 	data_frame[r_val_port]=int(r_val.get())
 	data_frame[g_val_port]=int(g_val.get())
 	data_frame[b_val_port]=int(b_val.get())
