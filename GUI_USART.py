@@ -93,7 +93,7 @@ def create_expected_color_img(bitmap_is_given=False, image_bitmap=0):
 	if os.path.exists("ICONS\EXPECTED_COLOR.png"):
 		os.remove("ICONS\EXPECTED_COLOR.png")
 	if(bitmap_is_given==False):
-		expected_color=np.zeros((400,400,3), np.uint8)
+		expected_color=np.zeros((400,400,3), np.uint16)
 		cv2.imwrite("ICONS\EXPECTED_COLOR.png", expected_color)
 
 	else:
@@ -142,26 +142,37 @@ def create_color():
     """
 	global is_ready, port_is_set
 
-	expected_color=np.zeros((400,400,3), np.uint8)
+	expected_color=np.zeros((400,400,3), np.uint16)
 	for i in range (0, 400):
 		for j in range (0, 400):
-			expected_color[i,j,2]=np.uint8(int(r_val.get()))
-			expected_color[i,j,1]=np.uint8(int(g_val.get()))
-			expected_color[i,j,0]=np.uint8(int(b_val.get()))
+			expected_color[i,j,2]=np.uint16(int(r_val.get()))
+			expected_color[i,j,1]=np.uint16(int(g_val.get()))
+			expected_color[i,j,0]=np.uint16(int(b_val.get()))
 
 	create_expected_color_img(True, expected_color);
 	is_ready=True
 	set_status(is_ready, port_is_set)
 	#############################################
-	##gamma = 2.8 # Correction factor
-	##max_in = 65535 # Top end of INPUT range
-	##max_out = 65535 # Top end of OUTPUT range
-	##value_after_gamma_corretion = (int)(np.power(int(r_val.get())/max_in, gamma) * max_out + 0.5
+	gamma = 2.2 # Correction factor
+	rmax_in = 65535.0 # Top end of R_INPUT range
+	rmax_out = 65535.0 # Top end of R_OUTPUT range
+	gmax_in = 65535.0 # Top end of G_INPUT range
+	gmax_out = 18750.0 # Top end of G_OUTPUT range
+	bmax_in = 65535.0 # Top end of B_INPUT range
+	bmax_out = 11355.0# Top end of B_OUTPUT range
+	
+	r_value=int(r_val.get())
+	g_value=int(g_val.get())
+	b_value=int(b_val.get())
+
+	r_value_after_gamma_corretion = (int)(pow(r_value/rmax_in, gamma) * rmax_out + 0.5)
+	g_value_after_gamma_corretion = (int)(pow(g_value/gmax_in, gamma) * gmax_out + 0.5)
+	b_value_after_gamma_corretion = (int)(pow(b_value/bmax_in, gamma) * bmax_out + 0.5)
 	###############################################
 	
-	data_frame[r_val_port]=int(r_val.get())
-	data_frame[g_val_port]=int(g_val.get())
-	data_frame[b_val_port]=int(b_val.get())
+	data_frame[r_val_port]=r_value_after_gamma_corretion             #int(r_val.get())
+	data_frame[g_val_port]=g_value_after_gamma_corretion             #int(g_val.get())
+	data_frame[b_val_port]=b_value_after_gamma_corretion             #int(b_val.get())
 	print("Data frame:\n\n{}".format(data_frame))
 	#############################################
 
