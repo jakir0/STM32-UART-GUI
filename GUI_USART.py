@@ -169,9 +169,9 @@ def create_color():
 	rmax_in = 65535 # Top end of R_INPUT range
 	rmax_out = 65535 # Top end of R_OUTPUT range
 	gmax_in = 65535 # Top end of G_INPUT range
-	gmax_out = 10500 # Top end of G_OUTPUT range
+	gmax_out = 10350 # Top end of G_OUTPUT range
 	bmax_in = 65535 # Top end of B_INPUT range
-	bmax_out = 6950# Top end of B_OUTPUT range
+	bmax_out = 6640# Top end of B_OUTPUT range
 	############################################
 	
 	r_value=int(r_val.get())
@@ -185,23 +185,23 @@ def create_color():
 	#	b_value = 65535 * (b_value/(sum_of_channels))
 	#	print(r_value, g_value, b_value)
 				
-	r_value_after_gamma_corretion = (int)(r_value/rmax_in * rmax_out)
-	g_value_after_gamma_corretion = (int)(g_value/gmax_in * gmax_out)
-	b_value_after_gamma_corretion = (int)(b_value/bmax_in * bmax_out)
+	#r_value_after_gamma_corretion = (int)(r_value/rmax_in * rmax_out)
+	#g_value_after_gamma_corretion = (int)(g_value/gmax_in * gmax_out)
+	#b_value_after_gamma_corretion = (int)(b_value/bmax_in * bmax_out)
 	
 	#else:
-	#r_value_after_gamma_corretion = (int)(pow(r_value/rmax_in, gamma) * rmax_out) #+0.5
-	#g_value_after_gamma_corretion = (int)(pow(g_value/gmax_in, gamma) * gmax_out)
-	#b_value_after_gamma_corretion = (int)(pow(b_value/bmax_in, gamma) * bmax_out)
+	r_value_after_gamma_corretion = (int)(pow(r_value/rmax_in, gamma) * rmax_out) #+0.5
+	g_value_after_gamma_corretion = (int)(pow(g_value/gmax_in, gamma) * gmax_out)
+	b_value_after_gamma_corretion = (int)(pow(b_value/bmax_in, gamma) * bmax_out)
 	###############################################
 
-	#data_frame[r_val_port] = r_value_after_gamma_corretion #r_value 
-	#data_frame[g_val_port] = g_value_after_gamma_corretion #g_value
-	#data_frame[b_val_port] = b_value_after_gamma_corretion #b_value
+	data_frame[r_val_port] = r_value_after_gamma_corretion 
+	data_frame[g_val_port] = g_value_after_gamma_corretion 
+	data_frame[b_val_port] = b_value_after_gamma_corretion 
 	
-	data_frame[r_val_port] = r_value 
-	data_frame[g_val_port] = g_value
-	data_frame[b_val_port] = b_value
+	#data_frame[r_val_port] = r_value 
+	#data_frame[g_val_port] = g_value
+	#data_frame[b_val_port] = b_value
 	print("Data frame:\n\n{}".format(data_frame))
 	#############################################
 
