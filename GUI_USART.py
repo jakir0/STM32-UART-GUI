@@ -55,7 +55,7 @@ def serial_ports():
             A list of the serial ports available on the system
     """
     if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
+        ports = ['COM%s' % (i + 1) for i in range(8)]
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
@@ -93,7 +93,7 @@ def create_expected_color_img(bitmap_is_given=False, image_bitmap=0):
 	if os.path.exists("ICONS\EXPECTED_COLOR.png"):
 		os.remove("ICONS\EXPECTED_COLOR.png")
 	if(bitmap_is_given==False):
-		expected_color=np.zeros((400,400,3), np.uint8)
+		expected_color=np.zeros((400,400,3), np.uint16)
 		cv2.imwrite("ICONS\EXPECTED_COLOR.png", expected_color)
 
 	else:
@@ -142,26 +142,66 @@ def create_color():
     """
 	global is_ready, port_is_set
 
-	expected_color=np.zeros((400,400,3), np.uint8)
+	expected_color=np.zeros((400,400,3), np.uint16)
 	for i in range (0, 400):
 		for j in range (0, 400):
-			expected_color[i,j,2]=np.uint8(int(r_val.get()))
-			expected_color[i,j,1]=np.uint8(int(g_val.get()))
-			expected_color[i,j,0]=np.uint8(int(b_val.get()))
+			expected_color[i,j,2]=np.uint16(int(r_val.get()))
+			expected_color[i,j,1]=np.uint16(int(g_val.get()))
+			expected_color[i,j,0]=np.uint16(int(b_val.get()))
 
 	create_expected_color_img(True, expected_color);
 	is_ready=True
 	set_status(is_ready, port_is_set)
 	#############################################
-	##gamma = 2.8 # Correction factor
-	##max_in = 65535 # Top end of INPUT range
-	##max_out = 65535 # Top end of OUTPUT range
-	##value_after_gamma_corretion = (int)(np.power(int(r_val.get())/max_in, gamma) * max_out + 0.5
-	###############################################
+	# 1mm - diameter of fibre, 1.5m lenght of fibre 
+	#gamma = 2.2 # Correction factor
+	#rmax_in = 65535 # Top end of R_INPUT range
+	#rmax_out = 65535 # Top end of R_OUTPUT range
+	#gmax_in = 65535 # Top end of G_INPUT range
+	#gmax_out = 18750 # Top end of G_OUTPUT range
+	#bmax_in = 65535 # Top end of B_INPUT range
+	#bmax_out = 11355# Top end of B_OUTPUT range
+	############################################
+
+	#############################################
+	# 1,5mm - diameter of fibre, ?m - lenght of fibre 
+	gamma = 2.2 # Correction factor
+	rmax_in = 65535 # Top end of R_INPUT range
+	rmax_out = 65535 # Top end of R_OUTPUT range
+	gmax_in = 65535 # Top end of G_INPUT range
+	gmax_out = 10350 # Top end of G_OUTPUT range
+	bmax_in = 65535 # Top end of B_INPUT range
+	bmax_out = 6640# Top end of B_OUTPUT range
+	############################################
 	
-	data_frame[r_val_port]=int(r_val.get())
-	data_frame[g_val_port]=int(g_val.get())
-	data_frame[b_val_port]=int(b_val.get())
+	r_value=int(r_val.get())
+	g_value=int(g_val.get())
+	b_value=int(b_val.get())
+
+	#sum_of_channels = r_value + g_value + b_value
+	#if(sum_of_channels>65535):
+	#	r_value = 65535 * (r_value/(sum_of_channels))
+	#	g_value = 65535 * (g_value/(sum_of_channels))
+	#	b_value = 65535 * (b_value/(sum_of_channels))
+	#	print(r_value, g_value, b_value)
+				
+	#r_value_after_gamma_corretion = (int)(r_value/rmax_in * rmax_out)
+	#g_value_after_gamma_corretion = (int)(g_value/gmax_in * gmax_out)
+	#b_value_after_gamma_corretion = (int)(b_value/bmax_in * bmax_out)
+	
+	#else:
+	r_value_after_gamma_corretion = (int)(pow(r_value/rmax_in, gamma) * rmax_out) #+0.5
+	g_value_after_gamma_corretion = (int)(pow(g_value/gmax_in, gamma) * gmax_out)
+	b_value_after_gamma_corretion = (int)(pow(b_value/bmax_in, gamma) * bmax_out)
+	###############################################
+
+	data_frame[r_val_port] = r_value_after_gamma_corretion 
+	data_frame[g_val_port] = g_value_after_gamma_corretion 
+	data_frame[b_val_port] = b_value_after_gamma_corretion 
+	
+	#data_frame[r_val_port] = r_value 
+	#data_frame[g_val_port] = g_value
+	#data_frame[b_val_port] = b_value
 	print("Data frame:\n\n{}".format(data_frame))
 	#############################################
 
